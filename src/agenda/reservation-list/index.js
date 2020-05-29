@@ -36,7 +36,10 @@ class ReservationList extends Component {
     onScrollBeginDrag: PropTypes.func,
     onScrollEndDrag: PropTypes.func,
     onMomentumScrollBegin: PropTypes.func,
-    onMomentumScrollEnd: PropTypes.func
+    onMomentumScrollEnd: PropTypes.func,
+    onEndReachedThreshold: PropTypes.number,
+    onEndReached: PropTypes.func,
+    displayStartDate: PropTypes.any,
   };
 
   constructor(props) {
@@ -160,7 +163,10 @@ class ReservationList extends Component {
     }
     let reservations = [];
     if (this.state.reservations && this.state.reservations.length) {
-      const iterator = this.state.reservations[0].day.clone();
+      let iterator = this.state.reservations[0].day.clone();
+      // if (props.displayStartDate) {
+      //   iterator = props.displayStartDate.clone();
+      // }
       while (iterator.getTime() < props.selectedDay.getTime()) {
         const res = this.getReservationsForDay(iterator, props);
         if (!res) {
@@ -173,7 +179,8 @@ class ReservationList extends Component {
       }
     }
     const scrollPosition = reservations.length;
-    const iterator = props.selectedDay.clone();
+    const iterator = props.selectedDay.clone()
+    // const iterator = props.displayStartDate.clone();
     for (let i = 0; i < 31; i++) {
       const res = this.getReservationsForDay(iterator, props);
       if (res) {
@@ -213,6 +220,8 @@ class ReservationList extends Component {
         onScrollEndDrag={this.props.onScrollEndDrag}
         onMomentumScrollBegin={this.props.onMomentumScrollBegin}
         onMomentumScrollEnd={this.props.onMomentumScrollEnd}
+        onEndReachedThreshold={this.props.onEndReachedThreshold}
+        onEndReached={this.props.onEndReached}
       />
     );
   }

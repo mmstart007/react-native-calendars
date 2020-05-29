@@ -62,6 +62,8 @@ export default class AgendaView extends Component {
     futureScrollRange: PropTypes.number,
     /** initially selected day */
     selected: PropTypes.any,
+    /** Display item from the date */
+    displayStart: PropTypes.any,
     /** Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined */
     minDate: PropTypes.any,
     /** Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined */
@@ -91,9 +93,13 @@ export default class AgendaView extends Component {
     /** Called when the momentum scroll starts for the agenda list. **/
     onMomentumScrollBegin: PropTypes.func,
     /** Called when the momentum scroll stops for the agenda list. **/
-    onMomentumScrollEnd: PropTypes.func
+    onMomentumScrollEnd: PropTypes.func,
+    /** Called once when the scroll position gets within onEndReachedThreshold of the rendered content. **/
+    onEndReached: PropTypes.func,
+    /** How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the onEndReached callback.  **/
+    onEndReachedThreshold: PropTypes.number,
   };
-
+  
   constructor(props) {
     super(props);
 
@@ -110,6 +116,7 @@ export default class AgendaView extends Component {
       calendarIsReady: false,
       calendarScrollable: false,
       firstResevationLoad: false,
+      displayStartDate: parseDate(this.props.displayStart) || XDate(true),
       selectedDay: parseDate(this.props.selected) || XDate(true),
       topDay: parseDate(this.props.selected) || XDate(true)
     };
@@ -231,8 +238,12 @@ export default class AgendaView extends Component {
   UNSAFE_componentWillReceiveProps(props) {
     if (props.items) {
       this.setState({
-        firstResevationLoad: false
+        firstResevationLoad: false,
+        displayStartDate: parseDate(this.props.displayStart) || XDate(true),
+        selectedDay: parseDate(this.props.selected) || XDate(true),
+        topDay: parseDate(this.props.selected) || XDate(true)
       });
+      this.onDayChange(props.selected)
     } else {
       this.loadReservations(props);
     }
@@ -300,7 +311,10 @@ export default class AgendaView extends Component {
         onMomentumScrollEnd={this.props.onMomentumScrollEnd}
         refreshControl={this.props.refreshControl}
         refreshing={this.props.refreshing}
+        displayStartDate={this.state.displayStartDate}
         onRefresh={this.props.onRefresh}
+        onEndReachedThreshold={this.props.onEndReachedThreshold}
+        onEndReached={this.props.onEndReached}
         rowHasChanged={this.props.rowHasChanged}
         renderItem={this.props.renderItem}
         renderDay={this.props.renderDay}
