@@ -198,7 +198,9 @@ class ReservationList extends Component {
         return this.props.renderEmptyData();
       }
       return (
-        <ActivityIndicator style={{marginTop: 80}} color={this.props.theme && this.props.theme.indicatorColor}/>
+        <View style={{flex:1, justifyContent: 'center'}}>
+          <ActivityIndicator size="large" style={{marginBottom: 20}} color={this.props.theme && this.props.theme.indicatorColor}/>
+        </View>
       );
     }
     return (
